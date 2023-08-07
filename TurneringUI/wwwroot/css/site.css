@@ -180,3 +180,19 @@ h1 {
   grid-column-start: 3;
   grid-row: 4/12;
 }
+
+.add-tour-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+}
+
+.add-teams-layout {
+  background-color: gray;
+  padding: 2rem;
+}
+
+.tabs {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 10px;
+}

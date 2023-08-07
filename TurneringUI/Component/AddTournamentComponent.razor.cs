@@ -148,4 +148,26 @@ public partial class AddTournamentComponent
       winnersNewMatchup.TeamOne = currentMatchup.Winner;
     }
   }
+
+  private void RemoveTeam(TeamModel team)
+  {
+    Teams.Remove(team);
+
+    int teamCount = Teams.Count;
+
+    GetRoundsAndPositions(teamCount);
+    AddingAllMatchups();
+    PlacingTeamsInThereMatchUps(teamCount);
+    CheckingForFreeWins();
+
+    Tournament.MatchUps = MatchUps.OrderByDescending(x => x.MatchPosition).ToList();
+
+    TournamentFormat.InvokeAsync(Tournament);
+  }
+
+  private async Task SaveData()
+  {
+    Tournament.User.Id = 1;
+    await tournamentData.CreateTournament(Tournament);
+  }
 }

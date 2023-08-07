@@ -1,13 +1,20 @@
-﻿@using TurneringLibrary.Models;
+﻿@using TurneringLibrary.Data;
+@using TurneringLibrary.Models;
+@inject ITournamentData tournamentData
 
 
 
-<div>
+<div class="tabs">
   @foreach (var t in Teams)
   {
-    <input type="text" value="@t.TeamName" @oninput="((text) => UpdateTeamName(text, t))" />
+    <div>
+      <input type="text" value="@t.TeamName" @oninput="((text) => UpdateTeamName(text, t))" />
+      <button @onclick="(() => RemoveTeam(t))"></button>
+    </div>
+    
   }
-  <button @onclick="AddTeam"></button>
+  <button @onclick="AddTeam">Lägga Till Lag</button>
+  <button @onclick="SaveData">Starta Tuneringen</button>
 </div>
 
 

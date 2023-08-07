@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
+using TurneringLibrary.Data;
+using TurneringLibrary.DbAccess;
 using TurneringUI.Areas.Identity;
 using TurneringUI.Data;
 
@@ -19,6 +21,11 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+
+
+builder.Services.AddTransient<IDataAccess, MySqlDataAccess>();
+builder.Services.AddTransient<ITournamentData, TournamentData>();
+
 
 var app = builder.Build();
 
