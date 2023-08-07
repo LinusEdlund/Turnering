@@ -66,3 +66,117 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+h1 {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.front-page {
+  display: flex;
+  justify-content: center;
+}
+
+.group-img {
+  display: flex;
+  gap: 30px;
+  flex-flow: wrap row;
+  width: 80%;
+  justify-content: center;
+}
+
+.img-link {
+  border: 2px solid black;
+  width: 400px;
+  height: 300px;
+  margin-bottom: 20px;
+}
+
+.img-link:hover {
+  cursor: pointer;
+  background-color: black;
+}
+
+
+/*Test för address tour ändra logic tror jag sen*/
+
+.game {
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+  border-top: 2px solid;
+  position: relative;
+}
+
+.top-slot {
+  position: absolute;
+  top: -20px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
+
+.seed, .name {
+  margin-right: 20px;
+}
+
+.bottom-slot {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+}
+
+.try-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 200px);
+  grid-template-rows: repeat(32, 50px);
+}
+
+.position0-Rounds2 {
+  grid-column-start: 1;
+  grid-row: 1/3;
+}
+
+.position1-Rounds2 {
+  grid-column-start: 1;
+  grid-row: 5/7;
+}
+
+.position2-Rounds2 {
+  grid-column-start: 2;
+  grid-row: 2/6;
+}
+
+.position0-Rounds3 {
+  grid-column-start: 1;
+  grid-row: 1/3;
+}
+
+.position1-Rounds3 {
+  grid-column-start: 1;
+  grid-row: 5/7;
+}
+
+.position2-Rounds3 {
+  grid-column-start: 1;
+  grid-row: 9/11;
+}
+
+.position3-Rounds3 {
+  grid-column-start: 1;
+  grid-row: 13/15;
+}
+
+.position4-Rounds3 {
+  grid-column-start: 2;
+  grid-row: 2/6;
+}
+
+.position5-Rounds3 {
+  grid-column-start: 2;
+  grid-row: 10/14;
+}
+
+.position6-Rounds3 {
+  grid-column-start: 3;
+  grid-row: 4/12;
+}

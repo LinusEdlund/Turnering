@@ -1,0 +1,30 @@
+﻿@using TurneringLibrary.Models;
+@using TurneringUI.Component
+@inherits LayoutComponentBase
+
+<PageTitle>TurneringUI</PageTitle>
+
+<div>
+  <main>
+    <div>
+      <AddTournamentComponent TournamentFormat="NewFormat" />
+    </div>
+    <article class="content px-4">
+      <CascadingValue Value="TournamentFormat">
+        @Body
+      </CascadingValue>
+
+    </article>
+  </main>
+</div>
+
+
+@code {
+  private TournamentModel TournamentFormat;
+
+  private void NewFormat(TournamentModel tournament)
+  {
+    TournamentFormat = tournament;
+  }
+
+}

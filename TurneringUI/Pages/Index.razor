@@ -1,9 +1,32 @@
 ﻿@page "/"
+@inject NavigationManager nav
 
-<PageTitle>Index</PageTitle>
+<h1>Skapa en turnering</h1>
 
-<h1>Hello, world!</h1>
+<div class="front-page">
+  <div class="group-img">
+    <div @onclick="Normal" class="img-link"></div>
+    <div @onclick="BasketBoll" class="img-link"></div>
+    <div @onclick="Fotboll" class="img-link"></div>
+  </div>
+</div>
 
-Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+
+@code {
+
+
+  private void Normal()
+  {
+    nav.NavigateTo("/Basic");
+  }
+  private void BasketBoll()
+  {
+
+  }
+
+  private void Fotboll()
+  {
+    
+  }
+}

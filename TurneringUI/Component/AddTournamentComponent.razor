@@ -1,0 +1,15 @@
+﻿@using TurneringLibrary.Models;
+
+
+
+<div>
+  @foreach (var t in Teams)
+  {
+    <input type="text" value="@t.TeamName" @oninput="((text) => UpdateTeamName(text, t))" />
+  }
+  <button @onclick="AddTeam"></button>
+</div>
+
+
+
+
