@@ -1,5 +1,7 @@
 ﻿
 
+using System.ComponentModel.DataAnnotations;
+
 namespace TurneringLibrary.Models;
 public class TeamModel
 {

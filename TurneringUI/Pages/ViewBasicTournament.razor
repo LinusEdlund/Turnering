@@ -1,0 +1,92 @@
+﻿@page "/View/Basic/{Id:int}"
+@using TurneringLibrary.Data;
+@using TurneringLibrary.Models;
+@inject IMatchUpData matchUpData
+
+
+<h3>ViewBasicTournament</h3>
+
+<div class="try-grid">
+  @for (int i = 0; i < matchUps?.Count; i++)
+  {
+    int currentIndex = i;
+    @if (matchUps[i].FreeWin == false)
+    {
+      <div class="@Style(currentIndex) game" @onclick="(() => ShowMatchUp(matchUps[currentIndex]))">
+        <div class="top-slot">
+          <div class="name">@(matchUps[i].TeamOne?.TeamName)</div>
+        </div>
+        <div class="bottom-slot">
+          <div class="name">@(matchUps[i].TeamTwo?.TeamName)</div>
+        </div>
+      </div>
+    }
+
+  }
+</div>
+
+@if (matchToEdit is not null)
+{
+  <div class="bottom-bar">
+    <EditForm Model="matchToEdit" OnSubmit="Score">
+      <div>
+        <label>@matchToEdit.TeamOne.TeamName</label>
+        <InputNumber @bind-Value="matchToEdit.TeamOneScore" />
+      </div>
+
+      <div>
+        <label>@matchToEdit.TeamTwo.TeamName</label>
+        <InputNumber @bind-Value="matchToEdit.TeamTwoScore" />
+      </div>
+      <button type="submit"></button>
+    </EditForm>
+  </div>
+
+}
+
+@code {
+  [Parameter]
+  public int Id { get; set; }
+
+  private EditContext editContext;
+
+  private List<MatchUpModel> matchUps;
+
+  private MatchUpModel? matchToEdit;
+
+  protected override async Task OnInitializedAsync()
+  {
+    matchUps = await matchUpData.GetMatchUpByTourId(Id);
+  }
+
+  private string Style(int position)
+  {
+    return $"position{position}-Rounds{matchUps.Count}";
+  }
+
+  private void ShowMatchUp(MatchUpModel match)
+  {
+    //behöver if saker här 
+    // man ska inte kunna edit där det inte finns två teams
+    // glöm inte färgerna 
+    matchToEdit = match;
+  }
+
+  private void Score()
+  {
+
+  }
+
+  //private bool ValidateScores()
+  //{
+  //  if (matchToEdit.TeamOneScore == matchToEdit.TeamTwoScore)
+  //  {
+  //    editContext.AddValidationMessage(() => matchToEdit.TeamTwoScore, "Scores for Team 1 and Team 2 cannot be the same.");
+  //    return false;
+  //  }
+
+  //  return true;
+  //}
+
+
+}

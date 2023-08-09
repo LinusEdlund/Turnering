@@ -169,5 +169,6 @@ public partial class AddTournamentComponent
   {
     Tournament.User.Id = 1;
     await tournamentData.CreateTournament(Tournament, Teams);
+    navigat.NavigateTo($"/View/Basic/{Tournament.Id}");
   }
 }

@@ -28,5 +28,20 @@ public class MySqlDataAccess : IDataAccess
     await connection.ExecuteAsync(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
   }
 
+  public async Task<IEnumerable<T>> LoadData<T, U, A, B>(string storedProcedure, Func<T, U, A, B, T> parameters, string split, string connectionId = "Default")
+  {
+    using IDbConnection connection = new MySqlConnection(_config.GetConnectionString(connectionId));
+
+    return await connection.QueryAsync(storedProcedure, parameters, splitOn: split, commandType: CommandType.StoredProcedure);
+  }
+
+  public async Task<IEnumerable<T>> LoadDataParam<T, U, A, B>(string storedProcedure, Func<T, U, A, B, T> parameters, string split, object paramValues = null, string connectionId = "Default")
+  {
+    using IDbConnection connection = new MySqlConnection(_config.GetConnectionString(connectionId));
+
+    return await connection.QueryAsync(storedProcedure, parameters, param: paramValues, splitOn: split, commandType: CommandType.StoredProcedure);
+  }
+
+
 
 }

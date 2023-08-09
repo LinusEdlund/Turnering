@@ -131,21 +131,6 @@ h1 {
   grid-template-rows: repeat(32, 50px);
 }
 
-.position0-Rounds2 {
-  grid-column-start: 1;
-  grid-row: 1/3;
-}
-
-.position1-Rounds2 {
-  grid-column-start: 1;
-  grid-row: 5/7;
-}
-
-.position2-Rounds2 {
-  grid-column-start: 2;
-  grid-row: 2/6;
-}
-
 .position0-Rounds3 {
   grid-column-start: 1;
   grid-row: 1/3;
@@ -157,26 +142,41 @@ h1 {
 }
 
 .position2-Rounds3 {
-  grid-column-start: 1;
-  grid-row: 9/11;
-}
-
-.position3-Rounds3 {
-  grid-column-start: 1;
-  grid-row: 13/15;
-}
-
-.position4-Rounds3 {
   grid-column-start: 2;
   grid-row: 2/6;
 }
 
-.position5-Rounds3 {
+.position0-Rounds7 {
+  grid-column-start: 1;
+  grid-row: 1/3;
+}
+
+.position1-Rounds7 {
+  grid-column-start: 1;
+  grid-row: 5/7;
+}
+
+.position2-Rounds7 {
+  grid-column-start: 1;
+  grid-row: 9/11;
+}
+
+.position3-Rounds7 {
+  grid-column-start: 1;
+  grid-row: 13/15;
+}
+
+.position4-Rounds7 {
+  grid-column-start: 2;
+  grid-row: 2/6;
+}
+
+.position5-Rounds7 {
   grid-column-start: 2;
   grid-row: 10/14;
 }
 
-.position6-Rounds3 {
+.position6-Rounds7 {
   grid-column-start: 3;
   grid-row: 4/12;
 }
@@ -195,4 +195,14 @@ h1 {
   display: flex;
   flex-flow: column nowrap;
   gap: 10px;
+}
+
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: white; /* Optional background color */
+  border-top: 1px solid #ccc; /* Optional border */
+  padding: 10px; /* Optional padding */
 }

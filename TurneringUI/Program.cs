@@ -25,6 +25,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuth
 
 builder.Services.AddTransient<IDataAccess, MySqlDataAccess>();
 builder.Services.AddTransient<ITournamentData, TournamentData>();
+builder.Services.AddTransient<IMatchUpData, MatchUpData>();
 
 
 var app = builder.Build();

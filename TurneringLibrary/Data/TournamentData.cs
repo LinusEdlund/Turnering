@@ -28,6 +28,7 @@ public class TournamentData : ITournamentData
     await _data.SaveData<DynamicParameters>("create_tournament", parameters);
 
     int tournamentId = parameters.Get<int>("InsertedId");
+    t.Id = tournamentId;
 
     foreach (var team in teams)
     {
@@ -59,8 +60,6 @@ public class TournamentData : ITournamentData
       };
 
       await _data.SaveData<dynamic>("create_match", matchParameters);
-
-
     }
 
   }

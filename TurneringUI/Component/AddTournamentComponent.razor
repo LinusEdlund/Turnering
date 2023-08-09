@@ -1,21 +1,30 @@
 ﻿@using TurneringLibrary.Data;
 @using TurneringLibrary.Models;
 @inject ITournamentData tournamentData
+@inject NavigationManager navigat
 
 
 
-<div class="tabs">
-  @foreach (var t in Teams)
-  {
+<EditForm Model="@Tournament" OnValidSubmit="SaveData">
+  <DataAnnotationsValidator />
+  <ValidationSummary />
+  <div class="tabs">
     <div>
-      <input type="text" value="@t.TeamName" @oninput="((text) => UpdateTeamName(text, t))" />
-      <button @onclick="(() => RemoveTeam(t))"></button>
+      <label>Tunerings Namn</label>
+      <InputText @bind-Value="Tournament.TournamentName"/>
     </div>
-    
-  }
-  <button @onclick="AddTeam">Lägga Till Lag</button>
-  <button @onclick="SaveData">Starta Tuneringen</button>
-</div>
+    @foreach (var t in Teams)
+    {
+    <div>
+      <InputText @bind-Value="t.TeamName" @oninput="((text) => UpdateTeamName(text, t))" />
+      <button type="button" @onclick="(() => RemoveTeam(t))"></button>
+    </div>
+
+    }
+    <button type="button" @onclick="AddTeam">Lägga Till Lag</button>
+    <button type="submit">Starta Tuneringen</button>
+  </div>
+</EditForm>
 
 
 
