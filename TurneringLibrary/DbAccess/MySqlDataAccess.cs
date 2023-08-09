@@ -28,12 +28,5 @@ public class MySqlDataAccess : IDataAccess
     await connection.ExecuteAsync(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
   }
 
-  public async Task SaveData(string storedProcedure, DynamicParameters parameters, string connectionId = "Default")
-  {
-    using IDbConnection connection = new MySqlConnection(_config.GetConnectionString(connectionId));
-
-    await connection.ExecuteAsync(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
-  }
-
 
 }

@@ -16,7 +16,7 @@ public class TournamentData : ITournamentData
     _data = data;
   }
 
-  public async Task CreateTournament(TournamentModel t)
+  public async Task CreateTournament(TournamentModel t, List<TeamModel> teams)
   {
     var parameters = new DynamicParameters();
     parameters.Add("Name", t.TournamentName);
@@ -25,10 +25,43 @@ public class TournamentData : ITournamentData
     parameters.Add("Users_Id", t.User.Id);
     parameters.Add("InsertedId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-    await _data.SaveData("create_tournament", parameters);
+    await _data.SaveData<DynamicParameters>("create_tournament", parameters);
 
-    int insertedId = parameters.Get<int>("InsertedId");
+    int tournamentId = parameters.Get<int>("InsertedId");
 
+    foreach (var team in teams)
+    {
+      DynamicParameters teamParameters = new();
+      teamParameters.Add("TeamName", team.TeamName);
+      teamParameters.Add("InsertedId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+      await _data.SaveData<DynamicParameters>("create_team", teamParameters);
+      int teamId = teamParameters.Get<int>("InsertedId");
+      team.Id = teamId;
+
+
+      await _data.SaveData<dynamic>("create_fk_team_tour", new { tour_id = tournamentId, team_id = team.Id });
+
+    }
+
+    foreach (var match in t.MatchUps!)
+    {
+      dynamic matchParameters = new
+      {
+        TeamOneId = match.TeamOne.Id,
+        TeamTwoId = match.TeamTwo.Id,
+        TeamOneScore = match.TeamOneScore,
+        TeamTwoScore = match.TeamTwoScore,
+        MatchPosition = match.MatchPosition,
+        tour_id = tournamentId,
+        WinnerId = match.Winner.Id,
+        FreeWin = match.FreeWin
+      };
+
+      await _data.SaveData<dynamic>("create_match", matchParameters);
+
+
+    }
 
   }
 }

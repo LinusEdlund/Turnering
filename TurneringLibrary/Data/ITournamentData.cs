@@ -3,5 +3,5 @@
 namespace TurneringLibrary.Data;
 public interface ITournamentData
 {
-  Task CreateTournament(TournamentModel tournament);
+  Task CreateTournament(TournamentModel t, List<TeamModel> Teams);
 }

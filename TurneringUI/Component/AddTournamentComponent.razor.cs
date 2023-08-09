@@ -168,6 +168,6 @@ public partial class AddTournamentComponent
   private async Task SaveData()
   {
     Tournament.User.Id = 1;
-    await tournamentData.CreateTournament(Tournament);
+    await tournamentData.CreateTournament(Tournament, Teams);
   }
 }
