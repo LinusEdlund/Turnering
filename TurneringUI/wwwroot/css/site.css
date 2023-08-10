@@ -206,3 +206,7 @@ h1 {
   border-top: 1px solid #ccc; /* Optional border */
   padding: 10px; /* Optional padding */
 }
+
+.highlight-red:hover {
+  border: 2px solid red;
+}

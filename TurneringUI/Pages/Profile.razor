@@ -1,0 +1,46 @@
+﻿@page "/Profile"
+@using TurneringLibrary.Data;
+@using TurneringLibrary.Models;
+@*@attribute [Authorize]*@
+@inject ITournamentData tournamentData
+@inject NavigationManager navManager
+
+
+<h3>Profile</h3>
+
+<div>
+  <div>
+    <h2>Alla Tuneringar</h2>
+  </div>
+  @foreach (var t in usersTournaments)
+  {
+    <div @onclick="(() => ViewTournament(t))">
+      <div>
+
+      </div>
+      <div>
+        <h3>@t.TournamentName</h3>
+        <p>Single Elimination</p>
+      </div>
+    </div>
+  }
+</div>
+
+
+
+@code {
+
+  private List<TournamentModel> usersTournaments = new();
+
+  protected override async Task OnInitializedAsync()
+  {
+    // Fix so i get the user id
+    // gör så man kan ta bort en tunering 
+    usersTournaments = await tournamentData.GetUsersTournaments(2);
+  }
+
+  private void ViewTournament(TournamentModel tournament)
+  {
+    navManager.NavigateTo($"/View/Basic/{tournament.Id}");
+  }
+}

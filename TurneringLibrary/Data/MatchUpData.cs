@@ -29,4 +29,18 @@ public class MatchUpData : IMatchUpData
     );
     return output.ToList();
   }
+
+  public Task UpdateMatch(MatchUpModel match)
+  {
+    dynamic param = new
+    {
+      match_id = match.Id,
+      TeamOneId = match.TeamOne?.Id,
+      TeamTwoId = match.TeamTwo?.Id,
+      TeamOneScore = match.TeamOneScore,
+      TeamTwoScore = match.TeamTwoScore,
+      WinnerId = match.Winner?.Id
+    };
+    return _data.SaveData<dynamic>("update_matchup", param);
+  }
 }

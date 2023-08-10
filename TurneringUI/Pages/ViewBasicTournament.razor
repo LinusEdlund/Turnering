@@ -12,7 +12,7 @@
     int currentIndex = i;
     @if (matchUps[i].FreeWin == false)
     {
-      <div class="@Style(currentIndex) game" @onclick="(() => ShowMatchUp(matchUps[currentIndex]))">
+      <div class="@Style(currentIndex) game @DisplayError(matchUps[currentIndex])" @onclick="(() => ShowMatchUp(matchUps[currentIndex]))">
         <div class="top-slot">
           <div class="name">@(matchUps[i].TeamOne?.TeamName)</div>
         </div>
@@ -66,15 +66,67 @@
 
   private void ShowMatchUp(MatchUpModel match)
   {
-    //behöver if saker här 
-    // man ska inte kunna edit där det inte finns två teams
-    // glöm inte färgerna 
-    matchToEdit = match;
+    if (match.TeamOne is not null && match.TeamTwo is not null && match.Winner is null)
+    {
+      matchToEdit = match;
+    }
+    else
+    {
+      matchToEdit = null;
+    }
   }
 
-  private void Score()
+  private string DisplayError(MatchUpModel match)
   {
+    if (match.TeamOne is null || match.TeamTwo is null || match.Winner is not null)
+    {
+      return "highlight-red";
+    }
+    return "";
+  }
 
+  private async Task Score()
+  {
+    if (matchToEdit is null)
+    {
+      matchToEdit = null;
+      return;
+    }
+    if (matchToEdit.TeamOneScore == matchToEdit.TeamTwoScore)
+    {
+      matchToEdit = null;
+      return;
+    }
+
+
+    if (matchToEdit.TeamOneScore > matchToEdit.TeamTwoScore)
+    {
+      matchToEdit.Winner = matchToEdit.TeamOne;
+    }
+    else
+    {
+      matchToEdit.Winner = matchToEdit.TeamTwo;
+    }
+
+    int winnerPosistion = Rounds.placement.FirstOrDefault(x => 
+                          x.Value.Contains(matchToEdit.MatchPosition)).Key;
+
+    var winnersNewMatchup = matchUps.First(x => x.MatchPosition == winnerPosistion);
+
+
+    if (matchToEdit.MatchPosition % 2 == 0)
+    {
+      winnersNewMatchup.TeamTwo = matchToEdit.Winner;
+    }
+    else
+    {
+      winnersNewMatchup.TeamOne = matchToEdit.Winner;
+    }
+
+    await matchUpData.UpdateMatch(matchToEdit);
+    await matchUpData.UpdateMatch(winnersNewMatchup);
+    matchToEdit = null;
+    
   }
 
   //private bool ValidateScores()
@@ -86,7 +138,7 @@
   //  }
 
   //  return true;
-  //}
+    //}
 
 
 }

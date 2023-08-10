@@ -167,7 +167,7 @@ public partial class AddTournamentComponent
 
   private async Task SaveData()
   {
-    Tournament.User.Id = 1;
+    Tournament.User.Id = 2;
     await tournamentData.CreateTournament(Tournament, Teams);
     navigat.NavigateTo($"/View/Basic/{Tournament.Id}");
   }

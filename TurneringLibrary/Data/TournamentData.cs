@@ -63,4 +63,11 @@ public class TournamentData : ITournamentData
     }
 
   }
+
+  public async Task<List<TournamentModel>> GetUsersTournaments(int userId)
+  {
+    var output = await _data.LoadData<TournamentModel, dynamic>("get_users_tour", new { p_id = userId });
+    return output.ToList();
+  }
+
 }
