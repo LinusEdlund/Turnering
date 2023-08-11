@@ -1,5 +1,9 @@
 ﻿@page "/"
+@using TurneringLibrary.Data;
+@using TurneringLibrary.Models;
 @inject NavigationManager nav
+@inject AuthenticationStateProvider authProvider
+@inject IUserData userData
 
 <h1>Skapa en turnering</h1>
 
@@ -14,7 +18,57 @@
 
 
 @code {
+  private UserModel? loggedInUser;
 
+
+
+  protected override async Task OnInitializedAsync()
+  {
+    await LoadAndVerifyUser();
+  }
+
+  private async Task LoadAndVerifyUser()
+  {
+    var authState = await authProvider.GetAuthenticationStateAsync();
+    string? objectId = authState.User.Claims.FirstOrDefault(c => c.Type.Contains("Id"))?.Value;
+
+    if (string.IsNullOrWhiteSpace(objectId) == false)
+    {
+      loggedInUser = await userData.GetUserFromAuthentication(objectId) ?? new();
+
+      //string firstName = authState.User.Claims.FirstOrDefault(c => c.Type.Contains("givenname"))?.Value;
+      //string lastName = authState.User.Claims.FirstOrDefault(c => c.Type.Contains("surname"))?.Value;
+      //string displayName = authState.User.Claims.FirstOrDefault(c => c.Type.Equals("name"))?.Value;
+      string? email = authState.User.Claims.FirstOrDefault(c => c.Type.Contains("email"))?.Value;
+
+      bool isDirty = false;
+      if (objectId.Equals(loggedInUser.ObjectIdentifier) == false)
+      {
+        isDirty = true;
+        loggedInUser.ObjectIdentifier = objectId;
+      }
+
+      if (email.Equals(loggedInUser.EmailAddress) == false)
+      {
+        isDirty = true;
+        loggedInUser.EmailAddress = email;
+      }
+
+      if (isDirty)
+      {
+        if (loggedInUser.Id is null)
+        {
+          await userData.CreateUser(loggedInUser);
+        }
+        else
+        {
+          await userData.UpdateUser(loggedInUser);
+        }
+      }
+
+    }
+
+  }
 
   private void Normal()
   {
