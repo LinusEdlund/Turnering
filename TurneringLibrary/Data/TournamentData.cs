@@ -16,7 +16,7 @@ public class TournamentData : ITournamentData
     _data = data;
   }
 
-  public async Task CreateTournament(TournamentModel t, List<TeamModel> teams)
+  public async Task CreateTournament(TournamentModel t, List<MatchUpModel> matchUps)
   {
     var parameters = new DynamicParameters();
     parameters.Add("Name", t.TournamentName);
@@ -30,7 +30,7 @@ public class TournamentData : ITournamentData
     int tournamentId = parameters.Get<int>("InsertedId");
     t.Id = tournamentId;
 
-    foreach (var team in teams)
+    foreach (var team in t.Teams)
     {
       DynamicParameters teamParameters = new();
       teamParameters.Add("TeamName", team.TeamName);
@@ -45,7 +45,7 @@ public class TournamentData : ITournamentData
 
     }
 
-    foreach (var match in t.MatchUps!)
+    foreach (var match in matchUps)
     {
       dynamic matchParameters = new
       {

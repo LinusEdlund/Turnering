@@ -9,6 +9,7 @@ public class MatchUpModel
   public int TeamOneScore { get; set; }
   public int TeamTwoScore { get; set; }
   public int MatchPosition { get; set; }
+  public int Tournaments_id { get; set; }
   public TeamModel Winner { get; set; } = new();
   public bool FreeWin { get; set; } = false;
 }

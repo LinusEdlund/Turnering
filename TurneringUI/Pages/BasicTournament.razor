@@ -8,18 +8,18 @@
 
 <div class="try-grid">
 
-  @if (Tournament is not null)
+  @if (MatchUps is not null)
   {
-    @for (int i = 0; i < Tournament.MatchUps?.Count; i++)
+    @for (int i = 0; i < MatchUps?.Count; i++)
     {
-      @if (Tournament.MatchUps[i].FreeWin == false)
+      @if (MatchUps[i].FreeWin == false)
       {
         <div class="@Style(i) game">
           <div class="top-slot">
-            <div class="name">@Tournament.MatchUps[i].TeamOne.TeamName</div>
+            <div class="name">@MatchUps[i].TeamOne.TeamName</div>
           </div>
           <div class="bottom-slot">
-            <div class="name">@Tournament.MatchUps[i].TeamTwo.TeamName</div>
+            <div class="name">@MatchUps[i].TeamTwo.TeamName</div>
           </div>
         </div>
       }
@@ -31,11 +31,11 @@
 
 @code {
   [CascadingParameter]
-  public TournamentModel? Tournament { get; set; }
+  public List<MatchUpModel>? MatchUps { get; set; }
 
   private string Style(int position)
   {
-    return $"position{position}-Rounds{Tournament?.HowManyPositions}";
+    return $"position{position}-Rounds{MatchUps.Count}";
   }
 
 }

@@ -47,4 +47,10 @@ public class UserData : IUserData
 
     await _data.SaveData("update_user", param);
   }
+
+  public async Task<UserModel?> GetUserFromTournament(int tourId)
+  {
+    var output = await _data.LoadData<UserModel, dynamic>("get_user_from_tour_id", new { tour_id = tourId });
+    return output.FirstOrDefault();
+  }
 }

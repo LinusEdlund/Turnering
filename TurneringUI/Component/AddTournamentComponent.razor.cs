@@ -1,29 +1,74 @@
 using Microsoft.AspNetCore.Components;
 using TurneringLibrary.Models;
+using TurneringUI.Helpers;
 
 namespace TurneringUI.Component;
 
 public partial class AddTournamentComponent
 {
-  private List<TeamModel> Teams = new();
   private TournamentModel Tournament = new();
   private List<MatchUpModel> MatchUps = new();
+  private UserModel? loggedInUser;
 
   [Parameter]
-  public EventCallback<TournamentModel> TournamentFormat { get; set; }
+  public EventCallback<List<MatchUpModel>> TournamentMatches { get; set; }
 
-  private void UpdateTeamName(ChangeEventArgs e, TeamModel team)
+  protected override async Task OnInitializedAsync()
   {
-    team.TeamName = e.Value.ToString();
-    TournamentFormat.InvokeAsync(Tournament);
+    loggedInUser = await authProvider.GetUserFromAuth(userData);
   }
 
-  private void AddTeam()
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    if (firstRender)
+    {
+      await LoadTourTeamState();
+      StateHasChanged();
+    }
+  }
+
+  private async Task UpdateTeamName(ChangeEventArgs e, TeamModel team)
+  {
+    team.TeamName = e.Value.ToString();
+    await TournamentMatches.InvokeAsync(MatchUps);
+    await SaveTourTeamState();
+  }
+
+  private async Task UpdateTourName(ChangeEventArgs e)
+  {
+    Tournament.TournamentName = e.Value.ToString();
+    await SaveTourTeamState();
+  }
+
+  private async Task LoadTourTeamState()
+  {
+    var tournamentResults = await sessionStorage.GetAsync<TournamentModel>(nameof(Tournament));
+
+    if (tournamentResults.Success && tournamentResults.Value is not null)
+    {
+      Tournament = tournamentResults.Value;
+
+      AddingAllMatchups();
+      PlacingTeamsInThereMatchUps(Tournament.Teams.Count);
+      CheckingForFreeWins();
+
+      MatchUps = MatchUps.OrderByDescending(x => x.MatchPosition).ToList();
+      await TournamentMatches.InvokeAsync(MatchUps);
+    }
+
+  }
+
+  private async Task SaveTourTeamState()
+  {
+    await sessionStorage.SetAsync(nameof(Tournament), Tournament);
+  }
+
+  private async void AddTeam()
   {
     TeamModel team = new();
-    int teamCount = Teams.Count + 1;
+    int teamCount = Tournament.Teams.Count + 1;
     team.TeamName = $"Team {teamCount}";
-    Teams.Add(team);
+    Tournament.Teams.Add(team);
     if (teamCount < 2)
     {
       return;
@@ -34,9 +79,11 @@ public partial class AddTournamentComponent
     PlacingTeamsInThereMatchUps(teamCount);
     CheckingForFreeWins();
 
-    Tournament.MatchUps = MatchUps.OrderByDescending(x => x.MatchPosition).ToList();
+    MatchUps = MatchUps.OrderByDescending(x => x.MatchPosition).ToList();
 
-    TournamentFormat.InvokeAsync(Tournament);
+    await TournamentMatches.InvokeAsync(MatchUps);
+
+    await SaveTourTeamState();
   }
 
   private void GetRoundsAndPositions(int teamCount)
@@ -72,13 +119,13 @@ public partial class AddTournamentComponent
       if (i % 2 == 0)
       {
         var updateMatch = MatchUps.First(x => x.MatchPosition == firstFirstRoundPosition);
-        updateMatch.TeamOne = Teams[i];
+        updateMatch.TeamOne = Tournament.Teams[i];
         firstFirstRoundPosition--;
       }
       else
       {
         var updateMatch = MatchUps.First(x => x.MatchPosition == lastFirstRoundPosition);
-        updateMatch.TeamTwo = Teams[i];
+        updateMatch.TeamTwo = Tournament.Teams[i];
         lastFirstRoundPosition++;
       }
     }
@@ -149,26 +196,35 @@ public partial class AddTournamentComponent
     }
   }
 
-  private void RemoveTeam(TeamModel team)
+  private async Task RemoveTeam(TeamModel team)
   {
-    Teams.Remove(team);
+    Tournament.Teams.Remove(team);
 
-    int teamCount = Teams.Count;
+    int teamCount = Tournament.Teams.Count;
 
     GetRoundsAndPositions(teamCount);
     AddingAllMatchups();
     PlacingTeamsInThereMatchUps(teamCount);
     CheckingForFreeWins();
 
-    Tournament.MatchUps = MatchUps.OrderByDescending(x => x.MatchPosition).ToList();
+    MatchUps = MatchUps.OrderByDescending(x => x.MatchPosition).ToList();
 
-    TournamentFormat.InvokeAsync(Tournament);
+    await TournamentMatches.InvokeAsync(MatchUps);
+    await SaveTourTeamState();
   }
 
   private async Task SaveData()
   {
-    Tournament.User.Id = 2;
-    await tournamentData.CreateTournament(Tournament, Teams);
-    navigat.NavigateTo($"/View/Basic/{Tournament.Id}");
+    // maybe clear it here
+    if (loggedInUser is not null)
+    {
+      Tournament.User = loggedInUser;
+      await tournamentData.CreateTournament(Tournament, MatchUps);
+      navigat.NavigateTo($"/View/Basic/{Tournament.Id}");
+    }
+    else
+    {
+      navigat.NavigateTo("/Identity/Account/Login", true);
+    }
   }
 }

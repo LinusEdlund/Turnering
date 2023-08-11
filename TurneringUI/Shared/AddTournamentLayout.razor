@@ -7,7 +7,7 @@
 <div>
   <main class="add-tour-layout">
     <div class="add-teams-layout">
-      <AddTournamentComponent TournamentFormat="NewFormat" />
+      <AddTournamentComponent TournamentMatches="NewFormat" />
     </div>
     <article class="content px-4">
       <CascadingValue Value="TournamentFormat">
@@ -20,9 +20,9 @@
 
 
 @code {
-  private TournamentModel TournamentFormat;
+  private List<MatchUpModel> TournamentFormat;
 
-  private void NewFormat(TournamentModel tournament)
+  private void NewFormat(List<MatchUpModel> tournament)
   {
     TournamentFormat = tournament;
   }

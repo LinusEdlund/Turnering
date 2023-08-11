@@ -1,29 +1,39 @@
 ﻿@page "/View/Basic/{Id:int}"
 @using TurneringLibrary.Data;
 @using TurneringLibrary.Models;
+@using TurneringUI.Helpers;
 @inject IMatchUpData matchUpData
+@inject AuthenticationStateProvider authProvider
+@inject IUserData userData
 
 
 <h3>ViewBasicTournament</h3>
+@if (matchUps is not null)
+{
 
-<div class="try-grid">
-  @for (int i = 0; i < matchUps?.Count; i++)
-  {
-    int currentIndex = i;
-    @if (matchUps[i].FreeWin == false)
+  <div class="try-grid">
+    @for (int i = 0; i < matchUps?.Count; i++)
     {
-      <div class="@Style(currentIndex) game @DisplayError(matchUps[currentIndex])" @onclick="(() => ShowMatchUp(matchUps[currentIndex]))">
-        <div class="top-slot">
-          <div class="name">@(matchUps[i].TeamOne?.TeamName)</div>
+      int currentIndex = i;
+      @if (matchUps[i].FreeWin == false)
+      {
+        <div class="@Style(currentIndex) game @DisplayError(matchUps[currentIndex])" @onclick="(() => ShowMatchUp(matchUps[currentIndex]))">
+          <div class="top-slot">
+            <div class="name">@(matchUps[i].TeamOne?.TeamName)</div>
+          </div>
+          <div class="bottom-slot">
+            <div class="name">@(matchUps[i].TeamTwo?.TeamName)</div>
+          </div>
         </div>
-        <div class="bottom-slot">
-          <div class="name">@(matchUps[i].TeamTwo?.TeamName)</div>
-        </div>
-      </div>
-    }
+      }
 
-  }
-</div>
+    }
+  </div>
+}
+else
+{
+  <p>Det finns ingen match här</p>
+}
 
 @if (matchToEdit is not null)
 {
@@ -44,101 +54,4 @@
 
 }
 
-@code {
-  [Parameter]
-  public int Id { get; set; }
 
-  private EditContext editContext;
-
-  private List<MatchUpModel> matchUps;
-
-  private MatchUpModel? matchToEdit;
-
-  protected override async Task OnInitializedAsync()
-  {
-    matchUps = await matchUpData.GetMatchUpByTourId(Id);
-  }
-
-  private string Style(int position)
-  {
-    return $"position{position}-Rounds{matchUps.Count}";
-  }
-
-  private void ShowMatchUp(MatchUpModel match)
-  {
-    if (match.TeamOne is not null && match.TeamTwo is not null && match.Winner is null)
-    {
-      matchToEdit = match;
-    }
-    else
-    {
-      matchToEdit = null;
-    }
-  }
-
-  private string DisplayError(MatchUpModel match)
-  {
-    if (match.TeamOne is null || match.TeamTwo is null || match.Winner is not null)
-    {
-      return "highlight-red";
-    }
-    return "";
-  }
-
-  private async Task Score()
-  {
-    if (matchToEdit is null)
-    {
-      matchToEdit = null;
-      return;
-    }
-    if (matchToEdit.TeamOneScore == matchToEdit.TeamTwoScore)
-    {
-      matchToEdit = null;
-      return;
-    }
-
-
-    if (matchToEdit.TeamOneScore > matchToEdit.TeamTwoScore)
-    {
-      matchToEdit.Winner = matchToEdit.TeamOne;
-    }
-    else
-    {
-      matchToEdit.Winner = matchToEdit.TeamTwo;
-    }
-
-    int winnerPosistion = Rounds.placement.FirstOrDefault(x => 
-                          x.Value.Contains(matchToEdit.MatchPosition)).Key;
-
-    var winnersNewMatchup = matchUps.First(x => x.MatchPosition == winnerPosistion);
-
-
-    if (matchToEdit.MatchPosition % 2 == 0)
-    {
-      winnersNewMatchup.TeamTwo = matchToEdit.Winner;
-    }
-    else
-    {
-      winnersNewMatchup.TeamOne = matchToEdit.Winner;
-    }
-
-    await matchUpData.UpdateMatch(matchToEdit);
-    await matchUpData.UpdateMatch(winnersNewMatchup);
-    matchToEdit = null;
-    
-  }
-
-  //private bool ValidateScores()
-  //{
-  //  if (matchToEdit.TeamOneScore == matchToEdit.TeamTwoScore)
-  //  {
-  //    editContext.AddValidationMessage(() => matchToEdit.TeamTwoScore, "Scores for Team 1 and Team 2 cannot be the same.");
-  //    return false;
-  //  }
-
-  //  return true;
-    //}
-
-
-}

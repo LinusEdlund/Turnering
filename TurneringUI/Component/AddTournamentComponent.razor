@@ -1,7 +1,11 @@
-﻿@using TurneringLibrary.Data;
+﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+@using TurneringLibrary.Data;
 @using TurneringLibrary.Models;
 @inject ITournamentData tournamentData
 @inject NavigationManager navigat
+@inject ProtectedSessionStorage sessionStorage
+@inject AuthenticationStateProvider authProvider
+@inject IUserData userData
 
 
 
@@ -11,9 +15,9 @@
   <div class="tabs">
     <div>
       <label>Tunerings Namn</label>
-      <InputText @bind-Value="Tournament.TournamentName"/>
+      <InputText @bind-Value="Tournament.TournamentName" @oninput="((text) => UpdateTourName(text))"/>
     </div>
-    @foreach (var t in Teams)
+    @foreach (var t in Tournament.Teams)
     {
     <div>
       <InputText @bind-Value="t.TeamName" @oninput="((text) => UpdateTeamName(text, t))" />
