@@ -1,12 +1,22 @@
-﻿<AuthorizeView>
+﻿@inject NavigationManager navManager
+
+<AuthorizeView>
     <Authorized>
         <a href="Identity/Account/Manage">Hello, @context.User.Identity?.Name!</a>
-        <form method="post" action="Identity/Account/Logout">
-            <button type="submit" class="nav-link btn btn-link">Log out</button>
-        </form>
+        <div @onclick="LogOut">Log out</div>
+        <a href="/Profile">Profile</a>
     </Authorized>
     <NotAuthorized>
         <a href="Identity/Account/Register">Register</a>
         <a href="Identity/Account/Login">Log in</a>
     </NotAuthorized>
 </AuthorizeView>
+
+
+
+@code {
+  private void LogOut()
+  {
+    navManager.NavigateTo("Identity/Account/Logout", true);
+  }
+}

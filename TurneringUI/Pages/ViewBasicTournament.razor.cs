@@ -25,6 +25,46 @@ public partial class ViewBasicTournament
     }
   }
 
+  private void Cancle()
+  {
+    matchToEdit = null;
+  }
+
+  private string ColorTopWinner(MatchUpModel match)
+  {
+    if (match.Winner is not null && match.Winner.Id == match.TeamOne.Id)
+    {
+      return "highlight-winner";
+    }
+    else
+    {
+      return "";
+    }
+  }
+  private string ColorBottomWinner(MatchUpModel match)
+  {
+    if (match.Winner is not null && match.Winner.Id == match.TeamTwo.Id)
+    {
+      return "highlight-winner";
+    }
+    // maybe
+    //if (match.Winner is not null && match.Winner == match.TeamOne)
+    //{
+    //  return "highlight-loser";
+    //}
+    return "";
+  }
+
+  private string GetTournamentWinner()
+  {
+    var final = matchUps?.Where(x => x.MatchPosition == 1).FirstOrDefault();
+    if (final?.Winner is null)
+    {
+      return "";
+    }
+    string tournamentWinner = final.Winner.TeamName;
+    return tournamentWinner;
+  }
   private string Style(int position)
   {
     return $"position{position}-Rounds{matchUps.Count}";
@@ -48,7 +88,7 @@ public partial class ViewBasicTournament
     }
   }
 
-  private string DisplayError(MatchUpModel match)
+  private string MatchHover(MatchUpModel match)
   {
     if (loggedInUser is null || loggedInUser.Id != tournamentAuther?.Id)
     {
@@ -58,10 +98,10 @@ public partial class ViewBasicTournament
 
     if (match.TeamOne is null || match.TeamTwo is null || match.Winner is not null)
     {
-      return "highlight-red";
+      return "not-active-match";
     }
 
-    return "";
+    return "active-match";
   }
 
   private async Task Score()
@@ -75,7 +115,6 @@ public partial class ViewBasicTournament
 
     if (matchToEdit is null)
     {
-      matchToEdit = null;
       return;
     }
 
@@ -95,6 +134,19 @@ public partial class ViewBasicTournament
     }
 
     int winnerPosistion = Rounds.placement.FirstOrDefault(x => x.Value.Contains(matchToEdit.MatchPosition)).Key;
+
+    if (winnerPosistion == 0 && matchToEdit.MatchPosition == 1)
+    {
+      await matchUpData.UpdateMatch(matchToEdit);
+      matchToEdit = null;
+      return;
+    }
+    if (winnerPosistion == 0)
+    {
+      matchToEdit = null;
+      return;
+    }
+
     var winnersNewMatchup = matchUps.First(x => x.MatchPosition == winnerPosistion);
     if (matchToEdit.MatchPosition % 2 == 0)
     {
@@ -108,6 +160,11 @@ public partial class ViewBasicTournament
     await matchUpData.UpdateMatch(matchToEdit);
     await matchUpData.UpdateMatch(winnersNewMatchup);
     matchToEdit = null;
+  }
+
+  private string WinnerStyle()
+  {
+    return $"Winner{matchUps?.Count}";
   }
   //private bool ValidateScores()
   //{

@@ -3,31 +3,31 @@
 @page "/Basic"
 
 
-
-<h3>BasicTournament</h3>
-
-<div class="try-grid">
-
-  @if (MatchUps is not null)
-  {
-    @for (int i = 0; i < MatchUps?.Count; i++)
+  <div class="bracket">
+    <div class="try-grid">
+    @if (MatchUps is not null && MatchUps.Count > 0)
     {
-      @if (MatchUps[i].FreeWin == false)
+      @for (int i = 0; i < MatchUps?.Count; i++)
       {
-        <div class="@Style(i) game">
-          <div class="top-slot">
-            <div class="name">@MatchUps[i].TeamOne.TeamName</div>
+        @if (MatchUps[i].FreeWin == false)
+        {
+          <div class="@Style(i) game">
+            <div class="top-slot">
+              <div class="name">@MatchUps[i].TeamOne.TeamName</div>
+            </div>
+            <div class="bottom-slot">
+              <div class="name">@MatchUps[i].TeamTwo.TeamName</div>
+            </div>
           </div>
-          <div class="bottom-slot">
-            <div class="name">@MatchUps[i].TeamTwo.TeamName</div>
-          </div>
-        </div>
+        }
       }
-
+      <div class="winner-slot @WinnerStyle()">
+        <div class="name">@GetTournamentWinner()</div>
+      </div>
     }
-  }
+    </div>
+  </div>
 
-</div>
 
 @code {
   [CascadingParameter]
@@ -35,7 +35,23 @@
 
   private string Style(int position)
   {
-    return $"position{position}-Rounds{MatchUps.Count}";
+    return $"position{position}-Rounds{MatchUps?.Count}";
+  }
+
+  private string WinnerStyle()
+  {
+    return $"Winner{MatchUps?.Count}";
+  }
+
+  private string GetTournamentWinner()
+  {
+    var final = MatchUps?.Where(x => x.MatchPosition == 1).FirstOrDefault();
+    if (final?.Winner is null)
+    {
+      return "";
+    }
+    string tournamentWinner = final.Winner.TeamName;
+    return tournamentWinner;
   }
 
 }

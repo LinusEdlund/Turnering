@@ -1,42 +1,48 @@
 ﻿@page "/Profile"
 @using TurneringLibrary.Data;
 @using TurneringLibrary.Models;
-@*@attribute [Authorize]*@
+@using TurneringUI.Helpers;
+@attribute [Authorize]
 @inject ITournamentData tournamentData
 @inject NavigationManager navManager
+@inject AuthenticationStateProvider authProvider
+@inject IUserData userData
 
 
-<h3>Profile</h3>
-
-<div>
-  <div>
-    <h2>Alla Tuneringar</h2>
-  </div>
-  @foreach (var t in usersTournaments)
-  {
-    <div @onclick="(() => ViewTournament(t))">
+<div class="profile-site">
+  <div class="profile-table">
+    <div class="header-table">
+      <h2>Alla Tuneringar</h2>
+    </div>
+    @foreach (var t in usersTournaments)
+    {
+    <div class="item-table" @onclick="(() => ViewTournament(t))">
       <div>
-
       </div>
       <div>
         <h3>@t.TournamentName</h3>
-        <p>Single Elimination</p>
       </div>
     </div>
-  }
+    }
+  </div>
 </div>
-
 
 
 @code {
 
   private List<TournamentModel> usersTournaments = new();
 
+  private UserModel? loggedInUser;
+
   protected override async Task OnInitializedAsync()
   {
-    // Fix so i get the user id
-    // gör så man kan ta bort en tunering 
-    usersTournaments = await tournamentData.GetUsersTournaments(2);
+    // gör så man kan ta bort en tunering
+    loggedInUser = await authProvider.GetUserFromAuth(userData);
+    int id = loggedInUser?.Id ?? 0;
+    if (loggedInUser is not null && id > 0)
+    {
+      usersTournaments = await tournamentData.GetUsersTournaments(id);
+    }
   }
 
   private void ViewTournament(TournamentModel tournament)

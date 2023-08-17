@@ -22,4 +22,8 @@
     <ProjectReference Include="..\TurneringLibrary\TurneringLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>

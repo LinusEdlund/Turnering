@@ -4,17 +4,22 @@
 
 <PageTitle>TurneringUI</PageTitle>
 
-<div>
+<div class="tour-page">
   <main class="add-tour-layout">
-    <div class="add-teams-layout">
-      <AddTournamentComponent TournamentMatches="NewFormat" />
+    <div class="left-sidebar">
+      <div class="account">
+        <LoginDisplay />
+      </div>
+      <div class="add-teams-layout">
+        <AddTournamentComponent TournamentMatches="NewFormat" />
+      </div>
     </div>
-    <article class="content px-4">
+    <div>
       <CascadingValue Value="TournamentFormat">
         @Body
       </CascadingValue>
 
-    </article>
+    </div>
   </main>
 </div>
 

@@ -71,6 +71,7 @@ public partial class AddTournamentComponent
     Tournament.Teams.Add(team);
     if (teamCount < 2)
     {
+      await SaveTourTeamState();
       return;
     }
 
@@ -156,34 +157,7 @@ public partial class AddTournamentComponent
 
   private void PlaceingWinner(int position)
   {
-    Dictionary<int, List<int>> placement = new()
-          {
-              {
-                  1,
-                  new List<int>
-                  {
-                      2,
-                      3
-                  }
-              },
-              {
-                  2,
-                  new List<int>
-                  {
-                      4,
-                      5
-                  }
-              },
-              {
-                  3,
-                  new List<int>
-                  {
-                      6,
-                      7
-                  }
-              }
-          };
-    int winnerPosistion = placement.FirstOrDefault(x => x.Value.Contains(position)).Key;
+    int winnerPosistion = Rounds.placement.FirstOrDefault(x => x.Value.Contains(position)).Key;
     var currentMatchup = MatchUps.First(x => x.MatchPosition == position);
     var winnersNewMatchup = MatchUps.First(x => x.MatchPosition == winnerPosistion);
     if (position % 2 == 0)
@@ -199,15 +173,23 @@ public partial class AddTournamentComponent
   private async Task RemoveTeam(TeamModel team)
   {
     Tournament.Teams.Remove(team);
-
     int teamCount = Tournament.Teams.Count;
 
-    GetRoundsAndPositions(teamCount);
-    AddingAllMatchups();
-    PlacingTeamsInThereMatchUps(teamCount);
-    CheckingForFreeWins();
+    if (teamCount < 2)
+    {
+      MatchUps = new();
+    }
+    else
+    {
+      GetRoundsAndPositions(teamCount);
+      AddingAllMatchups();
+      PlacingTeamsInThereMatchUps(teamCount);
+      CheckingForFreeWins();
 
-    MatchUps = MatchUps.OrderByDescending(x => x.MatchPosition).ToList();
+      MatchUps = MatchUps.OrderByDescending(x => x.MatchPosition).ToList();
+    }
+
+
 
     await TournamentMatches.InvokeAsync(MatchUps);
     await SaveTourTeamState();
@@ -215,11 +197,11 @@ public partial class AddTournamentComponent
 
   private async Task SaveData()
   {
-    // maybe clear it here
     if (loggedInUser is not null)
     {
       Tournament.User = loggedInUser;
       await tournamentData.CreateTournament(Tournament, MatchUps);
+      await sessionStorage.DeleteAsync(nameof(Tournament));
       navigat.NavigateTo($"/View/Basic/{Tournament.Id}");
     }
     else

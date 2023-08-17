@@ -10,24 +10,28 @@
 
 
 <EditForm Model="@Tournament" OnValidSubmit="SaveData">
-  <DataAnnotationsValidator />
-  <ValidationSummary />
-  <div class="tabs">
-    <div>
-      <label>Tunerings Namn</label>
-      <InputText @bind-Value="Tournament.TournamentName" @oninput="((text) => UpdateTourName(text))"/>
-    </div>
-    @foreach (var t in Tournament.Teams)
-    {
-    <div>
-      <InputText @bind-Value="t.TeamName" @oninput="((text) => UpdateTeamName(text, t))" />
-      <button type="button" @onclick="(() => RemoveTeam(t))"></button>
-    </div>
 
-    }
-    <button type="button" @onclick="AddTeam">Lägga Till Lag</button>
-    <button type="submit">Starta Tuneringen</button>
+  <div class="settings">
+    <div class="setting-name">
+      <label>Tunerings Namn</label>
+      <InputText class="input-name" @bind-Value="Tournament.TournamentName" @oninput="((text) => UpdateTourName(text))" />
+    </div>
+    <div class="teams">
+      @foreach (var t in Tournament.Teams)
+      {
+        <div class="team">
+          <InputText class="input-name" @bind-Value="t.TeamName" @oninput="((text) => UpdateTeamName(text, t))" />
+          <span class="icon-x" @onclick="(() => RemoveTeam(t))">&Chi;</span>
+          <ValidationMessage For="@(() => t.TeamName)" />
+        </div>
+      }
+    </div>
+    <div class="options">
+      <button class="options-btn" type="button" @onclick="AddTeam">Lägga Till Lag</button>
+      <button class="options-btn" type="submit">Starta Tuneringen</button>
+    </div>
   </div>
+
 </EditForm>
 
 

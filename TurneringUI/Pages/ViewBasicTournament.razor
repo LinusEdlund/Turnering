@@ -7,28 +7,33 @@
 @inject IUserData userData
 
 
-<h3>ViewBasicTournament</h3>
 @if (matchUps is not null)
 {
-
   <div class="try-grid">
     @for (int i = 0; i < matchUps?.Count; i++)
     {
       int currentIndex = i;
       @if (matchUps[i].FreeWin == false)
       {
-        <div class="@Style(currentIndex) game @DisplayError(matchUps[currentIndex])" @onclick="(() => ShowMatchUp(matchUps[currentIndex]))">
+        <div class="@Style(currentIndex) game @MatchHover(matchUps[currentIndex])" @onclick="(() => ShowMatchUp(matchUps[currentIndex]))">
           <div class="top-slot">
-            <div class="name">@(matchUps[i].TeamOne?.TeamName)</div>
+            <div class="name @ColorTopWinner(matchUps[currentIndex])">@(matchUps[i].TeamOne?.TeamName)</div>
           </div>
           <div class="bottom-slot">
-            <div class="name">@(matchUps[i].TeamTwo?.TeamName)</div>
+            <div class="name @ColorBottomWinner(matchUps[currentIndex])">@(matchUps[i].TeamTwo?.TeamName)</div>
           </div>
+
         </div>
       }
 
     }
+    <div class="winner-slot @WinnerStyle()">
+      <div class="name highlight-winner">@GetTournamentWinner()</div>
+    </div>
+
   </div>
+
+
 }
 else
 {
@@ -37,20 +42,23 @@ else
 
 @if (matchToEdit is not null)
 {
-  <div class="bottom-bar">
-    <EditForm Model="matchToEdit" OnSubmit="Score">
-      <div>
+  <EditForm Model="matchToEdit" OnSubmit="Score">
+    <div class="bottom-bar">
+      <div class="score">
         <label>@matchToEdit.TeamOne.TeamName</label>
         <InputNumber @bind-Value="matchToEdit.TeamOneScore" />
       </div>
-
-      <div>
+      <div class="vs">
+        VS
+      </div>
+      <div class="score">
         <label>@matchToEdit.TeamTwo.TeamName</label>
         <InputNumber @bind-Value="matchToEdit.TeamTwoScore" />
       </div>
-      <button type="submit"></button>
-    </EditForm>
-  </div>
+      <button type="button" class="options-btn" @onclick="Cancle">Avbryt</button>
+      <button type="submit" class="options-btn">Bekräfta</button>
+    </div>
+  </EditForm>
 
 }
 
