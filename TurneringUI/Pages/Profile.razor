@@ -1,6 +1,7 @@
 ﻿@page "/Profile"
 @using TurneringLibrary.Data;
 @using TurneringLibrary.Models;
+@using TurneringUI.Component
 @using TurneringUI.Helpers;
 @attribute [Authorize]
 @inject ITournamentData tournamentData
@@ -9,23 +10,32 @@
 @inject IUserData userData
 
 
-<div class="profile-site">
-  <div class="profile-table">
-    <div class="header-table">
-      <h2>Alla Tuneringar</h2>
-    </div>
-    @foreach (var t in usersTournaments)
-    {
-    <div class="item-table" @onclick="(() => ViewTournament(t))">
-      <div>
+<div class="proflie-card">
+  <header class="head-card">
+    <h2>Alla Turneringar</h2>
+  </header>
+  @foreach (var t in usersTournaments)
+  {
+    <div @onclick="(() => ViewTournament(t))" class="main-card">
+      <div class="first-section">
+        <IconComponent></IconComponent>
+        <div>
+          <div class="title">@t.TournamentName</div>
+          <div class="info">Single Elimination</div>
+        </div>
       </div>
-      <div>
-        <h3>@t.TournamentName</h3>
+
+      <div class="sec-section">
+        <div class="amount">@t.HowManyPositions</div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+          <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+        </svg>
       </div>
+
     </div>
-    }
-  </div>
+  }
 </div>
+
 
 
 @code {

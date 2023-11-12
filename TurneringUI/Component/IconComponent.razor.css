@@ -1,0 +1,41 @@
+﻿
+.theme {
+  width: 66.5px;
+  height: 50px;
+  border-radius: 50%;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bracket-icon {
+  display: flex;
+}
+
+.box-icon {
+  border: 2px solid #fff;
+  border-left: 0;
+}
+
+.small-match {
+  width: 16px;
+  height: 9.5px;
+}
+
+  .small-match:first-child {
+    margin-bottom: 5px;
+  }
+
+.big-match {
+  width: 16px;
+  height: 17px;
+  align-self: center;
+}
+
+.winner-icon {
+  width: 13.5px;
+  height: 2px;
+  background-color: #fff;
+  align-self: center;
+}

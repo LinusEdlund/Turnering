@@ -1,84 +1,57 @@
-﻿@page "/"
-@using TurneringLibrary.Data;
-@using TurneringLibrary.Models;
-@inject NavigationManager nav
-@inject AuthenticationStateProvider authProvider
-@inject IUserData userData
+﻿@using TurneringLibrary.Models;
+@layout AddTournamentLayout
+@page "/"
 
-<h1>Skapa en turnering</h1>
 
-<div class="front-page">
-  <div class="group-img">
-    <div @onclick="Normal" class="img-link"></div>
+  <div class="bracket">
+    <div class="try-grid">
+    @if (MatchUps is not null && MatchUps.Count > 0)
+    {
+      @for (int i = 0; i < MatchUps?.Count; i++)
+      {
+        @if (MatchUps[i].FreeWin == false)
+        {
+          <div class="@Style(i) game">
+            <div class="top-slot">
+              <div class="name">@MatchUps[i].TeamOne.TeamName</div>
+            </div>
+            <div class="bottom-slot">
+              <div class="name">@MatchUps[i].TeamTwo.TeamName</div>
+            </div>
+          </div>
+        }
+      }
+      <div class="winner-slot @WinnerStyle()">
+        <div class="name">@GetTournamentWinner()</div>
+      </div>
+    }
+    </div>
   </div>
-</div>
-
 
 
 @code {
-  private UserModel? loggedInUser;
+  [CascadingParameter]
+  public List<MatchUpModel>? MatchUps { get; set; }
 
-
-
-  protected override async Task OnInitializedAsync()
+  private string Style(int position)
   {
-    await LoadAndVerifyUser();
+    return $"position{position}-Rounds{MatchUps?.Count}";
   }
 
-  private async Task LoadAndVerifyUser()
+  private string WinnerStyle()
   {
-    var authState = await authProvider.GetAuthenticationStateAsync();
-    string? objectId = authState.User.Claims.FirstOrDefault(c => c.Type.Contains("Id"))?.Value;
+    return $"Winner{MatchUps?.Count}";
+  }
 
-    if (string.IsNullOrWhiteSpace(objectId) == false)
+  private string GetTournamentWinner()
+  {
+    var final = MatchUps?.Where(x => x.MatchPosition == 1).FirstOrDefault();
+    if (final?.Winner is null)
     {
-      loggedInUser = await userData.GetUserFromAuthentication(objectId) ?? new();
-
-      //string firstName = authState.User.Claims.FirstOrDefault(c => c.Type.Contains("givenname"))?.Value;
-      //string lastName = authState.User.Claims.FirstOrDefault(c => c.Type.Contains("surname"))?.Value;
-      //string displayName = authState.User.Claims.FirstOrDefault(c => c.Type.Equals("name"))?.Value;
-      string? email = authState.User.Claims.FirstOrDefault(c => c.Type.Contains("email"))?.Value;
-
-      bool isDirty = false;
-      if (objectId.Equals(loggedInUser.ObjectIdentifier) == false)
-      {
-        isDirty = true;
-        loggedInUser.ObjectIdentifier = objectId;
-      }
-
-      if (email.Equals(loggedInUser.EmailAddress) == false)
-      {
-        isDirty = true;
-        loggedInUser.EmailAddress = email;
-      }
-
-      if (isDirty)
-      {
-        if (loggedInUser.Id is null)
-        {
-          await userData.CreateUser(loggedInUser);
-        }
-        else
-        {
-          await userData.UpdateUser(loggedInUser);
-        }
-      }
-
+      return "";
     }
-
+    string tournamentWinner = final.Winner.TeamName;
+    return tournamentWinner;
   }
 
-  private void Normal()
-  {
-    nav.NavigateTo("/Basic");
-  }
-  private void BasketBoll()
-  {
-
-  }
-
-  private void Fotboll()
-  {
-    
-  }
 }
