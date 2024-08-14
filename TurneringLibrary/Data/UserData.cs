@@ -13,9 +13,16 @@ public class UserData : IUserData
     _data = data;
   }
 
-  public async Task<UserModel?> GetUserFromAuthentication(string objectId)
+  public async Task<UserModel?> GetUserFromAuthentication(UserModel user)
   {
-    var output = await _data.LoadData<UserModel, dynamic>("get_user_auth", new { auth_id = objectId });
+    var output = await _data.LoadData<UserModel, dynamic>("get_user_auth", 
+        new { auth_id = user.ObjectIdentifier });
+    if (output.Count() < 1) 
+    {
+        await CreateUser(user);
+        output = await _data.LoadData<UserModel, dynamic>("get_user_auth",
+            new { auth_id = user.ObjectIdentifier });
+    }
     return output.FirstOrDefault();
   }
 

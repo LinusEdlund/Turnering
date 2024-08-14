@@ -197,6 +197,7 @@ public partial class AddTournamentComponent
 
   private async Task SaveData()
   {
+    loggedInUser = await authProvider.GetUserFromAuth(userData);
     if (loggedInUser is not null)
     {
       Tournament.User = loggedInUser;

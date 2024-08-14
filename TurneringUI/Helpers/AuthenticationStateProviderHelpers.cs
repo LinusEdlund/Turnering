@@ -10,9 +10,14 @@ public static class AuthenticationStateProviderHelpers
   {
     var authState = await provider.GetAuthenticationStateAsync();
     string? objectId = authState.User.Claims.FirstOrDefault(c => c.Type.Contains("Id"))?.Value;
+    string? email = authState.User.Claims.FirstOrDefault(c => c.Type.Contains("emailaddress"))?.Value;
+    UserModel user = new();
+    user.FirstName = email;
+    user.ObjectIdentifier = objectId;
+    user.EmailAddress = email;
     if (string.IsNullOrWhiteSpace(objectId) == false)
     {
-      return await userData.GetUserFromAuthentication(objectId);
+      return await userData.GetUserFromAuthentication(user);
     }
     return null;
   }
