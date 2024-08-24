@@ -20,8 +20,7 @@ public class UserData : IUserData
     if (output.Count() < 1) 
     {
         await CreateUser(user);
-        output = await _data.LoadData<UserModel, dynamic>("get_user_auth",
-            new { auth_id = user.ObjectIdentifier });
+        return user;
     }
     return output.FirstOrDefault();
   }
